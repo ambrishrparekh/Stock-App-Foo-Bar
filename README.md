@@ -1,1 +1,1 @@
-# Stock-App-Foo-Bar
+# Stock App
