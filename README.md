@@ -1,4 +1,5 @@
 # Stock App
-Team Members:
+### Team Members:
 
 Ambrish Parekh | parekh@usc.edu
+Jiho Kim | jihok@usc.edu
