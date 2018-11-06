@@ -77,7 +77,7 @@ public class StockLoader {
 					String dJson = jsonGetRequest(url);
 					
 					// reset the url string and query string
-					String query = "INSERT INTO Stocks (companyName, symbol, companyDescription) VALUES";
+					String query = "INSERT INTO Stocks (companyName, symbol, companyDescription, CEO, industry, market) VALUES";
 					if (i != symbols.size()) {
 						url = "https://api.iextrading.com/1.0/stock/market/batch?types=company&symbols=";
 						try {
@@ -98,9 +98,13 @@ public class StockLoader {
 							if (companyName.length() != 0) {
 								String symbol = curr.getAsJsonPrimitive("symbol").getAsString();
 								String description = curr.getAsJsonPrimitive("description").getAsString();
+								String CEO = curr.getAsJsonPrimitive("CEO").getAsString();
+								String industry = curr.getAsJsonPrimitive("industry").getAsString();
+								String market = curr.getAsJsonPrimitive("exchange").getAsString();
 								description = StringEscapeUtils.escapeJava(description);
-								query += " (\"" + companyName + "\",\"" + symbol + "\",\"" + description + "\"),";
-								System.out.println(symbol + ": " + companyName);
+								query += " (\"" + companyName + "\",\"" + symbol + "\",\"" + description + 
+										"\",\"" + CEO + "\",\"" + industry + "\",\"" + market + "\"),";
+								System.out.println(symbol + ": " + CEO);
 							}
 						}
 					}

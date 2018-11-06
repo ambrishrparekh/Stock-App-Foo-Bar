@@ -8,5 +8,8 @@ CREATE TABLE Stocks (
 	stockId INT(11) PRIMARY KEY AUTO_INCREMENT,
 	companyName VARCHAR(500) NULL,
     symbol VARCHAR(10) NOT NULL,
-    companyDescription VARCHAR(9999) NULL
+    companyDescription VARCHAR(9999) NULL, 
+    CEO VARCHAR(100) NULL,
+    industry VARCHAR(100) NULL,
+    market  VARCHAR(100) NULL
 );
