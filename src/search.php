@@ -21,6 +21,7 @@ Showing a blurb when clicked is not yet implemented-->
     }
     else
     {
+        $searchTerm = "";
         $sql = "SELECT * FROM Stocks;";
     }
 
