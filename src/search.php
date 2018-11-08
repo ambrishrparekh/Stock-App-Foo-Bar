@@ -3,18 +3,15 @@ Search result will be displayed in alphabetical order of symbols.
 The keywords will be bolded in the search result
 Showing a blurb when clicked is not yet implemented-->
 <?php
-    $host = "localhost";
-    $user = "root";
-    $pass = "root";
-    $db = "StockApp";
-
+    $host = "303.itpwebdev.com";
+    $user = "parekha_db_user";
+    $pass = "uscItp2018";
+    $db = "parekha_StockApp";
     $mysqli = new mysqli($host, $user, $pass, $db, 3306);
-
     if ($mysqli->connect_errno) {
         echo "MySQL Connection Error:" . $mysqli->connect_error;
         exit();
     }
-
     if (array_key_exists("searchTerm", $_REQUEST)) {
         $searchTerm = $_REQUEST["searchTerm"];
         $sql = "SELECT * FROM Stocks WHERE companyName LIKE '%" . $searchTerm . "%' OR symbol LIKE '%" . $searchTerm . "%';";
@@ -24,13 +21,11 @@ Showing a blurb when clicked is not yet implemented-->
         $searchTerm = "";
         $sql = "SELECT * FROM Stocks;";
     }
-
     $results = $mysqli->query($sql);
     if (!$results) {
         echo "SQL ERROR: " . $mysqli->error;
         exit();
     }
-
     $mysqli->close();
 ?>
 <!DOCTYPE html>
@@ -43,20 +38,16 @@ Showing a blurb when clicked is not yet implemented-->
             border-collapse: collapse;
             width: 100%;
         }
-
         td, th {
             border: 1px solid #ddd;
             padding: 8px;
         }
-
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
-
         tr:hover {
             background-color: #ddd;
         }
-
         th {
             padding-top: 12px;
             padding-bottom: 12px;
