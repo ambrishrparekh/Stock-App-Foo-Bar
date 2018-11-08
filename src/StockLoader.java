@@ -33,7 +33,7 @@ import com.google.gson.JsonParser;
  * This version loads the following information:
  * 		{symbol, companyName, description}
  */
-public class StockLoader {
+public class Main {
 	/*
 	 * DB: MySQL server address
 	 * USER, PASSWORD: username and password for the database server
@@ -77,7 +77,7 @@ public class StockLoader {
 					String dJson = jsonGetRequest(url);
 
 					// reset the url string and query string
-					String query = "INSERT INTO Stocks (companyName, symbol, companyDescription, CEO, industry, market) VALUES";
+					String query = "INSERT INTO Stocks (symbol, companyName, companyDescription, CEO, industry, market) VALUES";
 					if (i != symbols.size()) {
 						url = "https://api.iextrading.com/1.0/stock/market/batch?types=company&symbols=";
 						try {
@@ -102,7 +102,7 @@ public class StockLoader {
 								String industry = curr.getAsJsonPrimitive("industry").getAsString();
 								String market = curr.getAsJsonPrimitive("exchange").getAsString();
 								description = StringEscapeUtils.escapeJava(description);
-								query += " (\"" + companyName + "\",\"" + symbol + "\",\"" + description +
+								query += " (\"" + symbol + "\",\"" + companyName + "\",\"" + description +
 										"\",\"" + CEO + "\",\"" + industry + "\",\"" + market + "\"),";
 								System.out.println(symbol + ": " + CEO);
 							}
