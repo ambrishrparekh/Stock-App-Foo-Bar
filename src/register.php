@@ -23,7 +23,7 @@ Used PHP 5.5 Password Hashing API.
 		Username: <input type="text" name="username" placeholder="username"><br />
 		Password: <input type="password" name="password" placeholder="password"><br />
 		Confirm password: <input type="password" name="confirmPassword" placeholder="password"><br />
-		<input type="submit" name="register" value="Sign Up">
+		<input type="submit" name="register" value="Sign Up"> <a href="signin.php">Sign In</a>
 	</form>
 	<hr>
 <?php        
@@ -37,17 +37,7 @@ Used PHP 5.5 Password Hashing API.
         // clear the post array
         $_POST = array();
         
-        $host = "localhost";
-        $user = "root";
-        $pass = "root";
-        $db = "StockApp";
-        
-        $mysqli = new mysqli($host, $user, $pass, $db, 3306);
-        
-        if ($mysqli->connect_errno) {
-            echo "MySQL Connection Error:" . $mysqli->connect_error;
-            exit();
-        }
+        include 'databaseConnection.php';
         
         $malformed = false;
         if (strlen($username) < 8 || strlen($username) > 20) {

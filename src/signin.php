@@ -4,7 +4,9 @@ Basic outline of signin page.
 Valid username and password will redirect the page to "graphs.php", which does not exist yet.
 Else the page will show error message.
  -->
-
+<?php 
+    session_start();
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,20 +30,10 @@ Else the page will show error message.
         // clear the post array
         $_POST = array();
         
-        $host = "localhost";
-        $user = "root";
-        $pass = "root";
-        $db = "StockApp";
-        
-        $mysqli = new mysqli($host, $user, $pass, $db, 3306);
-        
-        if ($mysqli->connect_errno) {
-            echo "MySQL Connection Error:" . $mysqli->connect_error;
-            exit();
-        }
+        include 'databaseConnection.php';
         
         // Check if the username already exists
-        $sql = "SELECT u_password FROM Users WHERE u_username=\"$username\";";
+        $sql = "SELECT * FROM Users WHERE u_username=\"$username\";";
         $results = $mysqli->query($sql);
         if (!$results) {
             echo "SQL ERROR: " . $mysqli->error;
@@ -52,6 +44,8 @@ Else the page will show error message.
     	    $row = $results->fetch_assoc();
     	    if (password_verify($password, $row["u_password"])) {
     	        // executed when sign in is successful
+                $_SESSION["signedIn"] = TRUE;
+                $_SESSION["username"] = $username;
                 $mysqli->close();
     	        header("Location: /stockAppPHP/graphs.php");
     	        exit();
