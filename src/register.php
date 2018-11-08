@@ -5,6 +5,8 @@ These are currently implemented restrictions on username and password:
     - New username should not match any other username already in the database.
     - username and password should be between 8 and 20 characters (inclusive).
     - password and confirmPassword value should be same
+
+Used PHP 5.5 Password Hashing API.
  -->
 
 
