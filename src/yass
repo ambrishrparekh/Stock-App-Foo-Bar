@@ -1,0 +1,60 @@
+var datatext;
+$.ajax({
+method: 'GET',
+async: false,
+url: 'https://api.iextrading.com/1.0/stock/aapl/chart/date/20181105'
+})
+.done(function(results){
+ datatext = results;
+ console.log(datatext);
+ console.log(datatext.length);
+})
+.fail(function(){
+console.log("Ambrish is not a power user for phones? NO!")
+});
+
+console.log(datatext.length);
+var len = datatext.length;
+var i = 0;
+var outData = [];
+
+console.log("😤  😫😫😫😫😫🏳‍🌈🅱😳Am🅱💃rEEEEEEEEEEEEEEEEEEEEEEEESH " + len);
+
+for (i = len-1; i >= len-60; i--) {
+var thing = datatext[i];
+var month = thing.date.substring(4, 6);
+var mint = parseInt(month);
+mint--;
+var correctMonth = mint.toString();
+var datething = new Date(thing.date.substring(0, 4),correctMonth, thing.date.substring(6, 8), thing.minute.substring(0, 2), thing.minute.substring(3, 5), '00', '00');
+console.log(datething);
+console.log(thing.date.substring(4, 6));
+console.log(thing.date.substring(6, 8));
+console.log(thing.minute.substring(0, 2));
+console.log(thing.minute.substring(3, 5));
+console.log(datething.toISOString());
+console.log(Date.parse(datething.toISOString()));
+var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
+console.log(millis);
+//console.log(Date.parse(datething.toISOString()));
+    outData[i] = {
+        x: millis,
+        y: thing.average
+    }
+    
+}
+
+var jObj = JSON.parse(JSON.stringify(outData));
+
+$(function () {
+    $('#container').highcharts({
+        xAxis: {
+            type: 'datetime',
+            range: 3600 * 1000
+        },
+        series: [{
+            data: jObj
+        }]
+
+    });
+});
