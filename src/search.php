@@ -3,29 +3,29 @@ Search result will be displayed in alphabetical order of symbols.
 The keywords will be bolded in the search result
 Showing a blurb when clicked is not yet implemented-->
 <?php
-    $host = "303.itpwebdev.com";
-    $user = "parekha_db_user";
-    $pass = "uscItp2018";
-    $db = "parekha_StockApp";
-    $mysqli = new mysqli($host, $user, $pass, $db, 3306);
-    if ($mysqli->connect_errno) {
-        echo "MySQL Connection Error:" . $mysqli->connect_error;
-        exit();
-    }
+    session_start();
+
+    include 'databaseConnection.php';
+
     if (array_key_exists("searchTerm", $_REQUEST)) {
         $searchTerm = $_REQUEST["searchTerm"];
-        $sql = "SELECT * FROM Stocks WHERE companyName LIKE '%" . $searchTerm . "%' OR symbol LIKE '%" . $searchTerm . "%';";
+        $urlEncodedTerm = urlencode($searchTerm);
+        $escapedTerm = mysqli_real_escape_string($mysqli, $searchTerm);
+        $sql = "SELECT * FROM Stocks WHERE companyName LIKE '%" . $escapedTerm . "%' OR symbol LIKE '%" . $escapedTerm . "%' LIMIT 20;";
     }
     else
     {
         $searchTerm = "";
-        $sql = "SELECT * FROM Stocks;";
+        $urlEncodedTerm = "";
+        $sql = "SELECT * FROM Stocks LIMIT 20;";
     }
+
     $results = $mysqli->query($sql);
     if (!$results) {
         echo "SQL ERROR: " . $mysqli->error;
         exit();
     }
+    
     $mysqli->close();
 ?>
 <!DOCTYPE html>
@@ -38,16 +38,20 @@ Showing a blurb when clicked is not yet implemented-->
             border-collapse: collapse;
             width: 100%;
         }
+
         td, th {
             border: 1px solid #ddd;
             padding: 8px;
         }
+
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+
         tr:hover {
             background-color: #ddd;
         }
+
         th {
             padding-top: 12px;
             padding-bottom: 12px;
@@ -56,15 +60,20 @@ Showing a blurb when clicked is not yet implemented-->
             color: white;
         }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        jQuery(document).ready(function($) {
+            $(".clickable-row").click(function() {
+                window.location = $(this).data("href");
+            });
+        });
+    </script>
 </head>
 <body>
     <form name="searchForm" action="search.php">
-        <input type="text" name="searchTerm"
+        <input type="text" name="searchTerm" placeholder="Search..."
             value="<?php if ($searchTerm) {
                 echo $searchTerm;
-            }
-            else {
-                echo "Search Here";
             } ?>">
         <input type="submit" name="submit" value="Search!">
     </form>
@@ -82,9 +91,9 @@ Showing a blurb when clicked is not yet implemented-->
                 <th>Company</th>
             </tr>
         <?php while($row = $results->fetch_assoc()): ?>
-            <tr>
-                <td><?php echo preg_replace('/' . $searchTerm . '/i', "<strong>$0</strong>", $row["symbol"]); ?></td>
-                <td><?php echo preg_replace('/' . $searchTerm . '/i', "<strong>$0</strong>", $row["companyName"]); ?></td>
+            <tr class='clickable-row' data-href='blurb.php?symbol=<?php echo urlencode($row["symbol"]);?>'>
+                <td><?php echo preg_replace('/' . $urlEncodedTerm . '/i', "<strong>$0</strong>", $row["symbol"]); ?></td>
+                <td><?php echo preg_replace('/' . $urlEncodedTerm . '/i', "<strong>$0</strong>", $row["companyName"]); ?></td>
             </tr>
         <?php endwhile; ?>
         </table>

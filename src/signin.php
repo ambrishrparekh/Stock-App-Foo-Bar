@@ -47,7 +47,7 @@ Else the page will show error message.
                 $_SESSION["signedIn"] = TRUE;
                 $_SESSION["username"] = $username;
                 $mysqli->close();
-    	        header("Location: /stockAppPHP/graphs.php");
+    	        header("Location: /stockAppPHP/search.php");
     	        exit();
     	    }
         }
