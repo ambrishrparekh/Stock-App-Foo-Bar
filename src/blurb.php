@@ -9,6 +9,7 @@ $escapedSymbol = mysqli_real_escape_string($mysqli, $symbol);
 // Retrieves information about the stock from Stocks table
 $infoSql = "SELECT * FROM Stocks WHERE symbol=\"$escapedSymbol\";";
 $infoResults = $mysqli->query($infoSql);
+if (!$infoResults) {
     echo "SQL ERROR: " . $mysqli->error;
     exit();
 }
