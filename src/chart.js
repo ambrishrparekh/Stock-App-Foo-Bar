@@ -1,12 +1,16 @@
+// TODO
 // need to figure out how we can do something like this
 // http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/series-addpoint-append-and-shift/
 // or like this
 // https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/dynamic-update/
 // so the update per minute doesn't have to redraw everything
 
+// avoid duplicate adds of stocks
+// make sure only up to 5 stocks can be added
+
 var datatext;
 var stockSymbols = ['AAPL', 'FB'];
-var outData = [];
+// var outData = [];
 var stockSeries = [];
 
 var myChart = Highcharts.stockChart('container', {
@@ -112,7 +116,7 @@ function updateChart () {
     symbolString += stockSymbols[j] + ",";
   }
   symbolString += stockSymbols[stockSymbols.length - 1];
-  console.log(symbolString);
+  console.log('symbolString ' + symbolString);
 
   setInterval(function() {
       $.ajax({
@@ -142,8 +146,9 @@ function updateChart () {
           var datething = new Date(thing.date.substring(0,4), correctMonth, thing.date.substring(6,8), thing.minute.substring(0,2), thing.minute.substring(3,5), '00', '00');
           var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
 
-          series[symbolIndex].addPoint([millis, thing.average], true, true);
+          series[symbolIndex].addPoint([millis, thing.average], true, true); // why doesnt animation work?
       }
+      myChart.redraw();
 
       console.log("reloaded, at 1min");
   }, 60000);
@@ -153,8 +158,40 @@ function updateChart () {
 // make sure the user is not surpassing the max number of stocks we want to display
 function followNewStock(newStockSymbol)
 {
+  if (stockSymbols.length >= 5)
+  {
+    console.log("max number of stocks already reached");
+    return;
+  }
+
   // *** see if the stock is already in stockSymbols, if so, return
-  stockSymbols.push(newStockSymbol);
+  console.log("Stock symbols " + stockSymbols);
+  console.log("trying to follow " + newStockSymbol);
+
+  // method 1 of looking for duplicate stocks (doesn't work)
+  var alreadyFollowing = stockSymbols.includes(newStockSymbol);
+  console.log("AF " + alreadyFollowing);
+  if (alreadyFollowing)
+  {
+    console.log("already following bool");
+    return;
+  }
+
+  // method 2 of looking for duplicate stocks (doesn't work)
+  for (var k = 0; k < stockSymbols.length; k++)
+  {
+    console.log("comparing " + stockSymbols[k] + " " + newStockSymbol);
+    if (stockSymbols[k] === newStockSymbol)
+    {
+      console.log("already following");
+      return;
+    }
+  }
+
+  // add the new stock if not already following
+  stockSymbols[stockSymbols.length] = newStockSymbol;
+  console.log("After push SS " + stockSymbols); // doesn't give right output
+
   $.ajax({
       method: 'GET',
       async: false,
@@ -205,7 +242,7 @@ function followNewStock(newStockSymbol)
 // add initial stocks to the graph
 for (var i = 0; i < stockSeries.length; i++)
 {
-  console.log("adding this series:");
+  // console.log("adding this series:");
   console.log(stockSeries[i]);
   myChart.addSeries({
     name: stockSymbols[i],
@@ -216,6 +253,7 @@ myChart.redraw();
 
 followNewStock('GOOG');
 followNewStock('MSFT');
+followNewStock('FB'); // PROBLEM TODO -- FBis added even though already following
 
 // minute updates
 updateChart();
