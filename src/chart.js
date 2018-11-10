@@ -1,3 +1,9 @@
+// need to figure out how we can do something like this
+// http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/series-addpoint-append-and-shift/
+// or like this
+// https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/dynamic-update/
+// so the update per minute doesn't have to redraw everything
+
 var datatext;
 var stockSymbols = ['AAPL', 'FB'];
 var outData = [];
@@ -63,6 +69,35 @@ var myChart = Highcharts.stockChart('container', {
                 }
             }
         }
+    },
+
+    rangeSelector: {
+        buttons: [ {
+            type: 'all',
+            text: '60m'
+        }, {
+            count: 45,
+            type: 'minute',
+            text: '45m'
+        }, {
+            count: 30,
+            type: 'minute',
+            text: '30m'
+        }, {
+            count: 15,
+            type: 'minute',
+            text: '15m'
+        }],
+        inputEnabled: false,
+        selected: 0
+    },
+
+    title: {
+        text: 'Current Stock Prices'
+    },
+
+    exporting: {
+        enabled: true
     }
 });
 
@@ -180,6 +215,7 @@ for (var i = 0; i < stockSeries.length; i++)
 myChart.redraw();
 
 followNewStock('GOOG');
+followNewStock('MSFT');
 
 // minute updates
 updateChart();
