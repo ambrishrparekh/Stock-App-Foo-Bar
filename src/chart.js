@@ -239,6 +239,21 @@ function followNewStock(newStockSymbol)
   }
 }
 
+function unfollowStock (stockName)
+{
+  console.log(stockSymbols);
+  if (stockSymbols.includes(stockName))
+  {
+    console.log('stock found, removing');
+    var stockIndex = stockSymbols.indexOf(stockName);
+    myChart.series[stockIndex].remove();
+  }
+  else {
+    console.log('stock not found, not removing');
+    return;
+  }
+}
+
 // add initial stocks to the graph
 for (var i = 0; i < stockSeries.length; i++)
 {
@@ -254,6 +269,8 @@ myChart.redraw();
 followNewStock('GOOG');
 followNewStock('MSFT');
 followNewStock('FB'); // PROBLEM TODO -- FBis added even though already following
+
+unfollowStock('FB');
 
 // minute updates
 updateChart();
