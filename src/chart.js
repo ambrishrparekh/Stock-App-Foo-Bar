@@ -1,5 +1,5 @@
 var datatext;
-var stockSymbols;
+var stockSymbols = ['AAPL', 'FB'];
 var outData = [];
 
 let chart = Highcharts.stockChart('container', {
@@ -10,11 +10,20 @@ let chart = Highcharts.stockChart('container', {
             load: function() {
                 var series = this.series;
 
+                var symbolString = "";
+
+                for (var j = 0; j < stockSymbols.length-1; j++)
+                {
+                  symbolString += stockSymbols[j] + ",";
+                }
+                symbolString += stockSymbols[stockSymbols.length - 1];
+                console.log(symbolString);
+
                 setInterval(function() {
-                    $ajax.({
+                    $.ajax({
                         method: 'GET',
                         async: false,
-                        url: 'https://api.iextrading.com/1.0/stock/market/batch?symbols=AAPL,FB&types=chart&range=1d&chartLast=1'
+                        url: 'https://api.iextrading.com/1.0/stock/market/batch?symbols=' + symbolString + '&types=chart&range=1d&chartLast=1'
                     })
                     .done(function(results) {
                         datatext = results;
