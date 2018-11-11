@@ -77,8 +77,26 @@ var myChart = Highcharts.stockChart('container', {
             scrollbar: {
                 enabled: true,
                 showFull: false
+            },
+            labels: {
+            formatter: function () {
+                    return (this.value > 0 ? ' + ' : '') + this.value + '%';
+                }
             }
     },
+
+        plotOptions: {
+            series: {
+                compare: 'percent',
+                showInNavigator: true
+            }
+        },
+    
+    tooltip: {
+            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+            valueDecimals: 2,
+            split: true
+        },
 
     rangeSelector: {
         buttons: [ {
@@ -150,9 +168,13 @@ function updateChart () {
           var datething = new Date(thing.date.substring(0,4), correctMonth, thing.date.substring(6,8), thing.minute.substring(0,2), thing.minute.substring(3,5), '00', '00');
           var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
 
-          series[symbolIndex].addPoint([millis, thing.marketAverage], true, true); // why doesnt animation work?
+          series[symbolIndex].addPoint([millis, thing.marketAverage], true, true); // why doesnt animation work? -- animations happen when we do myChart.redraw()
       }
-      myChart.redraw();
+      
+      var animOptions = Highcharts.AnimationOptionsObject;
+      animOptions.duration = 1000;
+      
+      myChart.redraw(animOptions);
 
       console.log("reloaded, at 1min");
   }, 60000);
@@ -270,12 +292,12 @@ for (var i = 0; i < stockSeries.length; i++)
 myChart.redraw();
 
 // stockSymbols = followNewStock('GOOG');
-stockSymbols = followNewStock('ALGN');
-stockSymbols = followNewStock('ADBE');
-stockSymbols = followNewStock('NFLX');
-// stockSymbols = followNewStock('MSFT');
-// stockSymbols = followNewStock('FB');
-// stockSymbols = followNewStock('AMAT');
+//stockSymbols = followNewStock('ALGN');
+//stockSymbols = followNewStock('ADBE');
+//stockSymbols = followNewStock('NFLX');
+//stockSymbols = followNewStock('MSFT');
+//stockSymbols = followNewStock('FB');
+//stockSymbols = followNewStock('AMAT');
 
 console.log("stock symbols before unfollowing FB " + stockSymbols);
 // stockSymbols = unfollowStock('FB');
