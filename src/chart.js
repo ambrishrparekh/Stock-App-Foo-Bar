@@ -82,7 +82,12 @@ var myChart = Highcharts.stockChart('container', {
             formatter: function () {
                     return (this.value > 0 ? ' + ' : '') + this.value + '%';
                 }
-            }
+            },
+            plotLines: [{
+                value: 0,
+                width: 2,
+                color: 'silver'
+            }]
     },
 
         plotOptions: {
