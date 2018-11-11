@@ -5,8 +5,6 @@
 // https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/dynamic-update/
 // so the update per minute doesn't have to redraw everything
 
-// It would be cool to have a y-zoom
-
 var datatext;
 var stockSymbols = ['AAPL', 'FB'];
 var countStocks = 2; // initialize this to however many stocks the user was viewing in their last session/default number of stocks
@@ -60,7 +58,7 @@ var myChart = Highcharts.stockChart('container', {
                     var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
                     outData[k] = {
                       x: millis,
-                      y: thing.average
+                      y: thing.marketAverage
                     };
                   }
 
@@ -150,7 +148,7 @@ function updateChart () {
           var datething = new Date(thing.date.substring(0,4), correctMonth, thing.date.substring(6,8), thing.minute.substring(0,2), thing.minute.substring(3,5), '00', '00');
           var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
 
-          series[symbolIndex].addPoint([millis, thing.average], true, true); // why doesnt animation work?
+          series[symbolIndex].addPoint([millis, thing.marketAverage], true, true); // why doesnt animation work?
       }
       myChart.redraw();
 
@@ -228,7 +226,7 @@ function followNewStock(newStockSymbol)
       var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
       outData[k] = {
         x: millis,
-        y: thing.average
+        y: thing.marketAverage
       };
     }
 
@@ -281,6 +279,7 @@ console.log("stock symbols after unfollowing FB " + stockSymbols);
 // AAPL,,GOOG,MSFT
 // We may need to fix this!!!!!!
 
+stockSymbols = followNewStock('DIA');
 stockSymbols = followNewStock('CRMT');
 stockSymbols = followNewStock('DWCH');
 
