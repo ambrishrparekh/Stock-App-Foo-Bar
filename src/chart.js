@@ -5,8 +5,10 @@
 // https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/dynamic-update/
 // so the update per minute doesn't have to redraw everything
 
+// We should graph stocks that are close in price so that the graph looks better for demo purposes
+
 var datatext;
-var stockSymbols = ['AAPL', 'FB'];
+var stockSymbols = ['AAPL', 'AVGO'];
 var countStocks = 2; // initialize this to however many stocks the user was viewing in their last session/default number of stocks
 var stockSeries = [];
 
@@ -267,21 +269,24 @@ for (var i = 0; i < stockSeries.length; i++)
 }
 myChart.redraw();
 
-stockSymbols = followNewStock('GOOG');
-stockSymbols = followNewStock('MSFT');
-stockSymbols = followNewStock('FB');
-stockSymbols = followNewStock('AMAT');
+// stockSymbols = followNewStock('GOOG');
+stockSymbols = followNewStock('ALGN');
+stockSymbols = followNewStock('ADBE');
+stockSymbols = followNewStock('NFLX');
+// stockSymbols = followNewStock('MSFT');
+// stockSymbols = followNewStock('FB');
+// stockSymbols = followNewStock('AMAT');
 
 console.log("stock symbols before unfollowing FB " + stockSymbols);
-stockSymbols = unfollowStock('FB');
+// stockSymbols = unfollowStock('FB');
 console.log("stock symbols after unfollowing FB " + stockSymbols);
 // After unfollowing a stock, the stockSymbols array looks like this (empty spot for the stock deleted)
 // AAPL,,GOOG,MSFT
 // We may need to fix this!!!!!!
 
-stockSymbols = followNewStock('DIA');
-stockSymbols = followNewStock('CRMT');
-stockSymbols = followNewStock('DWCH');
+// stockSymbols = followNewStock('DIA');
+// stockSymbols = followNewStock('CRMT');
+// stockSymbols = followNewStock('DWCH');
 
 // minute updates
 updateChart();
