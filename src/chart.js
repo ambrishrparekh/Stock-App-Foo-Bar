@@ -5,6 +5,8 @@
 // https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/dynamic-update/
 // so the update per minute doesn't have to redraw everything
 
+// It would be cool to have a y-zoom
+
 var datatext;
 var stockSymbols = ['AAPL', 'FB'];
 var countStocks = 2; // initialize this to however many stocks the user was viewing in their last session/default number of stocks
@@ -67,7 +69,15 @@ var myChart = Highcharts.stockChart('container', {
                   stockSeries[symbolIndex] = outData;
                 }
             }
-        }
+        },
+        type: 'line',
+        zoomType: 'y'
+    },
+    yAxis: {
+            scrollbar: {
+                enabled: true,
+                showFull: false
+            }
     },
 
     rangeSelector: {
