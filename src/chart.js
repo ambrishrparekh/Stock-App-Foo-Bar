@@ -28,7 +28,6 @@ var myChart = Highcharts.stockChart('container', {
                   symbolString += stockSymbols[j] + ",";
                 }
                 symbolString += stockSymbols[stockSymbols.length - 1];
-                console.log(symbolString);
 
                 $.ajax({
                     method: 'GET',
@@ -54,7 +53,6 @@ var myChart = Highcharts.stockChart('container', {
                   for (var k = 0; k < 60; k++)
                   {
                     var thing = chartInfo[k];
-                    console.log(thing.date);
                     var month = thing.date.substring(4, 6);
                     var mint = parseInt(month);
                     mint--;
@@ -116,7 +114,6 @@ function updateChart () {
     symbolString += stockSymbols[j] + ",";
   }
   symbolString += stockSymbols[stockSymbols.length - 1];
-  console.log('symbolString ' + symbolString);
 
   setInterval(function() {
       $.ajax({
@@ -158,39 +155,36 @@ function updateChart () {
 // make sure the user is not surpassing the max number of stocks we want to display
 function followNewStock(newStockSymbol)
 {
+  var copyStockSymbols = stockSymbols.slice();
   if (stockSymbols.length >= 5)
   {
     console.log("max number of stocks already reached");
     return;
   }
 
-  // *** see if the stock is already in stockSymbols, if so, return
-  console.log("Stock symbols " + stockSymbols);
-  console.log("trying to follow " + newStockSymbol);
+  // see if the stock is already in stockSymbols, if so, return
 
   // method 1 of looking for duplicate stocks (doesn't work)
   var alreadyFollowing = stockSymbols.includes(newStockSymbol);
-  console.log("AF " + alreadyFollowing);
   if (alreadyFollowing)
   {
     console.log("already following bool");
-    return;
+    return copyStockSymbols;
   }
 
   // method 2 of looking for duplicate stocks (doesn't work)
   for (var k = 0; k < stockSymbols.length; k++)
   {
-    console.log("comparing " + stockSymbols[k] + " " + newStockSymbol);
     if (stockSymbols[k] === newStockSymbol)
     {
-      console.log("already following");
+      console.log("already following for");
       return;
     }
   }
 
   // add the new stock if not already following
-  stockSymbols[stockSymbols.length] = newStockSymbol;
-  console.log("After push SS " + stockSymbols); // doesn't give right output
+  copyStockSymbols.push(newStockSymbol);
+  stockSymbols = copyStockSymbols;
 
   $.ajax({
       method: 'GET',
@@ -237,28 +231,28 @@ function followNewStock(newStockSymbol)
       data: outData
     }, true); // true so the line will be redrawn
   }
+
+  return copyStockSymbols;
 }
 
 function unfollowStock (stockName)
 {
-  console.log(stockSymbols);
-  if (stockSymbols.includes(stockName))
+  var copyStockSymbols = stockSymbols.slice();
+  if (copyStockSymbols.includes(stockName))
   {
-    console.log('stock found, removing');
-    var stockIndex = stockSymbols.indexOf(stockName);
+    var stockIndex = copyStockSymbols.indexOf(stockName);
+    delete copyStockSymbols[stockIndex];
     myChart.series[stockIndex].remove();
   }
   else {
     console.log('stock not found, not removing');
-    return;
   }
+  return copyStockSymbols;
 }
 
 // add initial stocks to the graph
 for (var i = 0; i < stockSeries.length; i++)
 {
-  // console.log("adding this series:");
-  console.log(stockSeries[i]);
   myChart.addSeries({
     name: stockSymbols[i],
     data: stockSeries[i]
@@ -266,11 +260,16 @@ for (var i = 0; i < stockSeries.length; i++)
 }
 myChart.redraw();
 
-followNewStock('GOOG');
-followNewStock('MSFT');
-followNewStock('FB'); // PROBLEM TODO -- FBis added even though already following
+stockSymbols = followNewStock('GOOG');
+stockSymbols = followNewStock('MSFT');
+stockSymbols = followNewStock('FB');
 
-unfollowStock('FB');
+console.log("stock symbols before unfollowing FB " + stockSymbols);
+stockSymbols = unfollowStock('FB');
+console.log("stock symbols after unfollowing FB " + stockSymbols);
+// After unfollowing a stock, the stockSymbols array looks like this (empty spot for the stock deleted)
+// AAPL,,GOOG,MSFT
+// We may need to fix this!!!!!!
 
 // minute updates
 updateChart();
