@@ -5,12 +5,9 @@
 // https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/dynamic-update/
 // so the update per minute doesn't have to redraw everything
 
-// avoid duplicate adds of stocks
-// make sure only up to 5 stocks can be added
-
 var datatext;
 var stockSymbols = ['AAPL', 'FB'];
-// var outData = [];
+var countStocks = 2; // initialize this to however many stocks the user was viewing in their last session/default number of stocks
 var stockSeries = [];
 
 var myChart = Highcharts.stockChart('container', {
@@ -155,11 +152,12 @@ function updateChart () {
 // make sure the user is not surpassing the max number of stocks we want to display
 function followNewStock(newStockSymbol)
 {
+  // TODO make sure that newStockSymbol is a real stock symbol available to us
   var copyStockSymbols = stockSymbols.slice();
-  if (stockSymbols.length >= 5)
+  if (countStocks >= 5)
   {
-    console.log("max number of stocks already reached");
-    return;
+    console.log("max number of stocks already reached when trying to add " + newStockSymbol);
+    return copyStockSymbols;
   }
 
   // see if the stock is already in stockSymbols, if so, return
@@ -178,12 +176,13 @@ function followNewStock(newStockSymbol)
     if (stockSymbols[k] === newStockSymbol)
     {
       console.log("already following for");
-      return;
+      return copyStockSymbols;
     }
   }
 
   // add the new stock if not already following
   copyStockSymbols.push(newStockSymbol);
+  countStocks += 1;
   stockSymbols = copyStockSymbols;
 
   $.ajax({
@@ -211,7 +210,6 @@ function followNewStock(newStockSymbol)
     for (var k = 0; k < 60; k++)
     {
       var thing = chartInfo[k];
-      console.log(thing.date);
       var month = thing.date.substring(4, 6);
       var mint = parseInt(month);
       mint--;
@@ -243,6 +241,7 @@ function unfollowStock (stockName)
     var stockIndex = copyStockSymbols.indexOf(stockName);
     delete copyStockSymbols[stockIndex];
     myChart.series[stockIndex].remove();
+    countStocks -= 1;
   }
   else {
     console.log('stock not found, not removing');
@@ -263,6 +262,7 @@ myChart.redraw();
 stockSymbols = followNewStock('GOOG');
 stockSymbols = followNewStock('MSFT');
 stockSymbols = followNewStock('FB');
+stockSymbols = followNewStock('AMAT');
 
 console.log("stock symbols before unfollowing FB " + stockSymbols);
 stockSymbols = unfollowStock('FB');
@@ -270,6 +270,9 @@ console.log("stock symbols after unfollowing FB " + stockSymbols);
 // After unfollowing a stock, the stockSymbols array looks like this (empty spot for the stock deleted)
 // AAPL,,GOOG,MSFT
 // We may need to fix this!!!!!!
+
+stockSymbols = followNewStock('CRMT');
+stockSymbols = followNewStock('DWCH');
 
 // minute updates
 updateChart();
