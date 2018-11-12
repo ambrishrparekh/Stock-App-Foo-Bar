@@ -1,12 +1,3 @@
-// TODO
-// need to figure out how we can do something like this
-// http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/series-addpoint-append-and-shift/
-// or like this
-// https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/dynamic-update/
-// so the update per minute doesn't have to redraw everything
-
-// We should graph stocks that are close in price so that the graph looks better for demo purposes
-
 var datatext;
 var stockSymbols = ['AAPL', 'MSFT', 'AVGO'];
 var countStocks = 2; // initialize this to however many stocks the user was viewing in their last session/default number of stocks
@@ -47,7 +38,6 @@ var myChart = Highcharts.stockChart('container', {
                   var stockName = stockSymbols[symbolIndex];
                   var allStockInfo = datatext[stockName];
                   var chartInfo = allStockInfo.chart;
-                  // console.log(chartInfo.length);
                   var outData = [];
 
                   for (var k = 0; k < chartInfo.length; k++)
@@ -65,16 +55,6 @@ var myChart = Highcharts.stockChart('container', {
                     {
                       marAvg = thing.average;
                     }
-                    if (marAvg === -1 && (k-1) >= 0)
-                    {
-                      var prevThing = chartInfo[k-1]; // may cause out of bounds error
-                      marAvg = prevThing.marketAverage;
-                      if (marAvg === -1)
-                      {
-                        marAvg = prevThing.averag;
-                      }
-                    }
-
                     if (marAvg === -1)
                     {
                       marAvg = null;
@@ -222,7 +202,6 @@ function updateChart () {
 // make sure the user is not surpassing the max number of stocks we want to display
 function followNewStock(newStockSymbol)
 {
-  console.log("FOLLOWING NEW STOCK: " + newStockSymbol);
   // TODO make sure that newStockSymbol is a real stock symbol available to us
   var copyStockSymbols = stockSymbols.slice();
   if (countStocks >= 5)
@@ -232,7 +211,6 @@ function followNewStock(newStockSymbol)
   }
 
   // see if the stock is already in stockSymbols, if so, return
-
   // method 1 of looking for duplicate stocks (doesn't work)
   var alreadyFollowing = stockSymbols.includes(newStockSymbol);
   if (alreadyFollowing)
@@ -263,8 +241,6 @@ function followNewStock(newStockSymbol)
   })
   .done(function(results) {
       datatext = results;
-      console.log("follow results-------");
-      console.log(results);
   })
   .fail(function() {
       console.log("error");
@@ -276,13 +252,9 @@ function followNewStock(newStockSymbol)
   for (symbolIndex = 0; symbolIndex < stockSymbols.length; symbolIndex++)
   {
     var stockName = stockSymbols[symbolIndex];
-    console.log("in follow, stockName " + stockName);
     var allStockInfo = datatext[stockName];
     var chartInfo = allStockInfo.chart;
-    console.log("in follow, chartInfo below ");
-    console.log(chartInfo);
     var outData = [];
-    console.log("chartInfo length: " + chartInfo.length);
     for (var k = 0; k < chartInfo.length; k++)
     {
       var thing = chartInfo[k];
@@ -298,20 +270,10 @@ function followNewStock(newStockSymbol)
       {
         marAvg = thing.average;
       }
-      if (marAvg === -1 && (k-2) >= 0)
-      {
-        var prevThing = chartInfo[k-2]; // may cause out of bounds error
-        marAvg = prevThing.marketAverage;
-        console.log("looking at previous and setting marAvg to " + marAvg);
-        if (marAvg === -1)
-        {
-          marAvg = prevThing.average;
-          console.log("looking at previous and setting marAvg to " + marAvg);
-        }
-      }
-      console.log("in follow, marAvg " + marAvg);
+
       if (marAvg === -1)
       {
+        console.log("-1 value found");
         marAvg = null;
       }
       outData[k] = {
@@ -319,8 +281,6 @@ function followNewStock(newStockSymbol)
         y: marAvg
       };
     }
-    console.log("outData");
-    console.log(outData);
     var jObj = JSON.parse(JSON.stringify(outData));
 
     myChart.addSeries({
@@ -359,13 +319,6 @@ for (var i = 0; i < stockSeries.length; i++)
 myChart.redraw();
 
 stockSymbols = followNewStock('GOOG');
-// stockSymbols = followNewStock('ALGN');
-//stockSymbols = followNewStock('ADBE');
-//stockSymbols = followNewStock('NFLX');
-// stockSymbols = followNewStock('MSFT');
-// stockSymbols = followNewStock('FB');
-// stockSymbols = followNewStock('AMAT');
-
 // console.log("stock symbols before unfollowing FB " + stockSymbols);
 // stockSymbols = unfollowStock('FB');
 // console.log("stock symbols after unfollowing FB " + stockSymbols);
