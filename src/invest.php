@@ -12,7 +12,7 @@
         $userInfoSql = "SELECT * FROM Users WHERE u_username=\"$username\";";
         $userInfoResults = $mysqli->query($userInfoSql);
         if (!$userInfoResults) {
-            echo "usernameError";
+            echo "Error while retrieving user info: " . $mysqli->connect_errno;
             exit();
         }
         $userInfoRow = $userInfoResults->fetch_assoc();
@@ -27,8 +27,7 @@
         );
         
         $price = file_get_contents("https://api.iextrading.com/1.0/stock/".urlencode($symbol)."/price", false, stream_context_create($arrContextOptions));
-        $price = (int) ((float) $price) * 100;
-        var_dump($price);
+        $price = (int) (((float) $price) * 100.0);
         
         // error msg if retrieved price is -1
         if ($price == -1) {
@@ -39,7 +38,6 @@
         if ($submitType == "Sell") {
             $sellAmount = $_REQUEST["sellAmount"];
             $newBalance = $balance + $price*$sellAmount;
-            var_dump($newBalance);
             $sellSql = "UPDATE Investments SET i_amount=i_amount-$sellAmount WHERE i_username=\"$username\" AND i_symbol=\"$symbol\";";
             if ($mysqli->query($sellSql) === FALSE) {
                 echo "Error while updating investment data";
@@ -50,14 +48,13 @@
                 echo "Error while updating user balance data";
                 exit();
             }
-            echo"sellSuccess";
-            //header("Location: myMoney.php?status=success");                
+            header("Location: myMoney.php?status=success");                
         }
         else if ($submitType == "Buy") {
             $buyAmount = $_REQUEST["buyAmount"];
             $newBalance = $balance - $price*$buyAmount;
             if ($newBalance < 0) {
-                header("Location: myMoney.php?lowBalance=1");
+                header("Location: myMoney.php?status=lowBalance");
             }
             else {
                 $buySql = "UPDATE Investments SET i_amount=i_amount+$buyAmount WHERE i_username=\"$username\" AND i_symbol=\"$symbol\";";
@@ -65,13 +62,12 @@
                     echo "Error while updating investment data";
                     exit();
                 }
-                $balanceSql = "UPDATE Users SET u_balance=$newBalance WHERE i_username=\"$username\";";
+                $balanceSql = "UPDATE Users SET u_balance=$newBalance WHERE u_username=\"$username\";";
                 if ($mysqli->query($balanceSql) === FALSE) {
                     echo "Error while updating user balance data";
                     exit();
                 }
-                echo"buySuccess";
-                //header("Location: myMoney.php?status=success");
+                header("Location: myMoney.php?status=success");
             }
         }
     }
