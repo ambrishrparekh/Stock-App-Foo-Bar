@@ -8,7 +8,7 @@
 // We should graph stocks that are close in price so that the graph looks better for demo purposes
 
 var datatext;
-var stockSymbols = ['AAPL', 'AVGO'];
+var stockSymbols = ['AAPL', 'MSFT', 'AVGO'];
 var countStocks = 2; // initialize this to however many stocks the user was viewing in their last session/default number of stocks
 var stockSeries = [];
 
@@ -35,6 +35,7 @@ var myChart = Highcharts.stockChart('container', {
                 })
                 .done(function(results) {
                     datatext = results;
+                    console.log(results);
                 })
                 .fail(function() {
                     console.log("error");
@@ -47,9 +48,10 @@ var myChart = Highcharts.stockChart('container', {
                   var stockName = stockSymbols[symbolIndex];
                   var allStockInfo = datatext[stockName];
                   var chartInfo = allStockInfo.chart;
+                  console.log(chartInfo.length);
                   var outData = [];
 
-                  for (var k = 0; k < 60; k++)
+                  for (var k = 0; k < chartInfo.length; k++)
                   {
                     var thing = chartInfo[k];
                     var month = thing.date.substring(4, 6);
@@ -58,9 +60,30 @@ var myChart = Highcharts.stockChart('container', {
                     var correctMonth = mint.toString();
                     var datething = new Date(thing.date.substring(0, 4),correctMonth, thing.date.substring(6, 8), thing.minute.substring(0, 2), thing.minute.substring(3, 5), '00', '00');
                     var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
+
+                    var marAvg = thing.marketAverage;
+                    console.log("marAvg " + marAvg);
+                    console.log("marAvg " + marAvg);
+                    if (marAvg === -1)
+                    {
+                      console.log("-1 TRUE1");
+                      marAvg = thing.average;
+                    }
+                    if (marAvg === -1 && (k-1) >= 0)
+                    {
+                      console.log("-1 TRUE2");
+                      var prevThing = chartInfo[k-1]; // may cause out of bounds error
+                      marAvg = prevThing.marketAverage;
+                      if (marAvg === -1)
+                      {
+                        console.log("-1 TRUE3");
+                        marAvg = prevThing.averag;
+                      }
+                    }
+
                     outData[k] = {
                       x: millis,
-                      y: thing.marketAverage
+                      y: marAvg
                     };
                   }
 
@@ -88,7 +111,7 @@ var myChart = Highcharts.stockChart('container', {
                 width: 2,
                 color: 'silver'
             }]
-    },
+},
 
         plotOptions: {
             series: {
@@ -96,7 +119,7 @@ var myChart = Highcharts.stockChart('container', {
                 showInNavigator: true
             }
         },
-    
+
     tooltip: {
             pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
             valueDecimals: 2,
@@ -173,12 +196,20 @@ function updateChart () {
           var datething = new Date(thing.date.substring(0,4), correctMonth, thing.date.substring(6,8), thing.minute.substring(0,2), thing.minute.substring(3,5), '00', '00');
           var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
 
-          series[symbolIndex].addPoint([millis, thing.marketAverage], true, true); // why doesnt animation work? -- animations happen when we do myChart.redraw()
+          var marAvg = thing.marketAverage;
+          console.log("marAvg " + marAvg);
+          if (marAvg === -1)
+          {
+            console.log("-1 TRUE5");
+            marAvg = thing.average;
+          }
+
+          series[symbolIndex].addPoint([millis, marAvg], true, true); // why doesnt animation work? -- animations happen when we do myChart.redraw()
       }
-      
+
       var animOptions = Highcharts.AnimationOptionsObject;
       animOptions.duration = 1000;
-      
+
       myChart.redraw(animOptions);
 
       console.log("reloaded, at 1min");
@@ -244,7 +275,7 @@ function followNewStock(newStockSymbol)
     var chartInfo = allStockInfo.chart;
     var outData = [];
 
-    for (var k = 0; k < 60; k++)
+    for (var k = 0; k < chartInfo.length; k++)
     {
       var thing = chartInfo[k];
       var month = thing.date.substring(4, 6);
@@ -253,9 +284,28 @@ function followNewStock(newStockSymbol)
       var correctMonth = mint.toString();
       var datething = new Date(thing.date.substring(0, 4),correctMonth, thing.date.substring(6, 8), thing.minute.substring(0, 2), thing.minute.substring(3, 5), '00', '00');
       var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
+
+      var marAvg = thing.marketAverage;
+      if (marAvg === -1)
+      {
+        console.log("-1 TRUE6");
+        marAvg = thing.average;
+      }
+      if (marAvg === -1 && (k-1) >= 0)
+      {
+        console.log("-1 TRUE7");
+        var prevThing = chartInfo[k-1]; // may cause out of bounds error
+        marAvg = prevThing.marketAverage;
+        if (marAvg === -1)
+        {
+          console.log("-1 TRUE8");
+          marAvg = prevThing.averag;
+        }
+      }
+
       outData[k] = {
         x: millis,
-        y: thing.marketAverage
+        y: thing.marAvg
       };
     }
 
@@ -296,13 +346,15 @@ for (var i = 0; i < stockSeries.length; i++)
 }
 myChart.redraw();
 
+console.log(stockSymbols);
+
 // stockSymbols = followNewStock('GOOG');
 //stockSymbols = followNewStock('ALGN');
 //stockSymbols = followNewStock('ADBE');
 //stockSymbols = followNewStock('NFLX');
-//stockSymbols = followNewStock('MSFT');
-//stockSymbols = followNewStock('FB');
-//stockSymbols = followNewStock('AMAT');
+// stockSymbols = followNewStock('MSFT');
+// stockSymbols = followNewStock('FB');
+// stockSymbols = followNewStock('AMAT');
 
 console.log("stock symbols before unfollowing FB " + stockSymbols);
 // stockSymbols = unfollowStock('FB');
