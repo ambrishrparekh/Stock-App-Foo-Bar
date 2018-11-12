@@ -1,6 +1,6 @@
 var datatext;
 var stockSymbols = ['AAPL', 'MSFT', 'AVGO'];
-var countStocks = 2; // initialize this to however many stocks the user was viewing in their last session/default number of stocks
+var countStocks = 3; // initialize this to however many stocks the user was viewing in their last session/default number of stocks
 var stockSeries = [];
 
 var myChart = Highcharts.stockChart('container', {
