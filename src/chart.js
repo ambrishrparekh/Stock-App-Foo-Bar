@@ -1,7 +1,3 @@
-// add the default stocks for the user to view. they must log in to add/remove stocks. 
-// get the stocks that the user is following from the database if the user is signed in. return as javascript array and replace with stockSymbols. 
-// if else
-
 var datatext;
 var stockSymbols = ['AAPL', 'MSFT', 'AVGO'];
 var countStocks = 2; // initialize this to however many stocks the user was viewing in their last session/default number of stocks
@@ -77,14 +73,8 @@ var myChart = Highcharts.stockChart('container', {
                 }
             }
         },
-        type: 'line',
-        zoomType: 'y'
     },
     yAxis: {
-            scrollbar: {
-                enabled: true,
-                showFull: false
-            },
             labels: {
             formatter: function () {
                     return (this.value > 0 ? ' + ' : '') + this.value + '%';
