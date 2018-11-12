@@ -35,7 +35,6 @@ var myChart = Highcharts.stockChart('container', {
                 })
                 .done(function(results) {
                     datatext = results;
-                    console.log(results);
                 })
                 .fail(function() {
                     console.log("error");
@@ -48,7 +47,7 @@ var myChart = Highcharts.stockChart('container', {
                   var stockName = stockSymbols[symbolIndex];
                   var allStockInfo = datatext[stockName];
                   var chartInfo = allStockInfo.chart;
-                  console.log(chartInfo.length);
+                  // console.log(chartInfo.length);
                   var outData = [];
 
                   for (var k = 0; k < chartInfo.length; k++)
@@ -62,23 +61,23 @@ var myChart = Highcharts.stockChart('container', {
                     var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
 
                     var marAvg = thing.marketAverage;
-                    console.log("marAvg " + marAvg);
-                    console.log("marAvg " + marAvg);
                     if (marAvg === -1)
                     {
-                      console.log("-1 TRUE1");
                       marAvg = thing.average;
                     }
                     if (marAvg === -1 && (k-1) >= 0)
                     {
-                      console.log("-1 TRUE2");
                       var prevThing = chartInfo[k-1]; // may cause out of bounds error
                       marAvg = prevThing.marketAverage;
                       if (marAvg === -1)
                       {
-                        console.log("-1 TRUE3");
                         marAvg = prevThing.averag;
                       }
+                    }
+
+                    if (marAvg === -1)
+                    {
+                      marAvg = null;
                     }
 
                     outData[k] = {
@@ -197,11 +196,14 @@ function updateChart () {
           var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
 
           var marAvg = thing.marketAverage;
-          console.log("marAvg " + marAvg);
           if (marAvg === -1)
           {
-            console.log("-1 TRUE5");
             marAvg = thing.average;
+          }
+
+          if (marAvg === -1)
+          {
+            marAvg = null;
           }
 
           series[symbolIndex].addPoint([millis, marAvg], true, true); // why doesnt animation work? -- animations happen when we do myChart.redraw()
@@ -220,6 +222,7 @@ function updateChart () {
 // make sure the user is not surpassing the max number of stocks we want to display
 function followNewStock(newStockSymbol)
 {
+  console.log("FOLLOWING NEW STOCK: " + newStockSymbol);
   // TODO make sure that newStockSymbol is a real stock symbol available to us
   var copyStockSymbols = stockSymbols.slice();
   if (countStocks >= 5)
@@ -260,6 +263,8 @@ function followNewStock(newStockSymbol)
   })
   .done(function(results) {
       datatext = results;
+      console.log("follow results-------");
+      console.log(results);
   })
   .fail(function() {
       console.log("error");
@@ -271,10 +276,13 @@ function followNewStock(newStockSymbol)
   for (symbolIndex = 0; symbolIndex < stockSymbols.length; symbolIndex++)
   {
     var stockName = stockSymbols[symbolIndex];
+    console.log("in follow, stockName " + stockName);
     var allStockInfo = datatext[stockName];
     var chartInfo = allStockInfo.chart;
+    console.log("in follow, chartInfo below ");
+    console.log(chartInfo);
     var outData = [];
-
+    console.log("chartInfo length: " + chartInfo.length);
     for (var k = 0; k < chartInfo.length; k++)
     {
       var thing = chartInfo[k];
@@ -288,27 +296,31 @@ function followNewStock(newStockSymbol)
       var marAvg = thing.marketAverage;
       if (marAvg === -1)
       {
-        console.log("-1 TRUE6");
         marAvg = thing.average;
       }
-      if (marAvg === -1 && (k-1) >= 0)
+      if (marAvg === -1 && (k-2) >= 0)
       {
-        console.log("-1 TRUE7");
-        var prevThing = chartInfo[k-1]; // may cause out of bounds error
+        var prevThing = chartInfo[k-2]; // may cause out of bounds error
         marAvg = prevThing.marketAverage;
+        console.log("looking at previous and setting marAvg to " + marAvg);
         if (marAvg === -1)
         {
-          console.log("-1 TRUE8");
-          marAvg = prevThing.averag;
+          marAvg = prevThing.average;
+          console.log("looking at previous and setting marAvg to " + marAvg);
         }
       }
-
+      console.log("in follow, marAvg " + marAvg);
+      if (marAvg === -1)
+      {
+        marAvg = null;
+      }
       outData[k] = {
         x: millis,
-        y: thing.marAvg
+        y: marAvg
       };
     }
-
+    console.log("outData");
+    console.log(outData);
     var jObj = JSON.parse(JSON.stringify(outData));
 
     myChart.addSeries({
@@ -346,26 +358,20 @@ for (var i = 0; i < stockSeries.length; i++)
 }
 myChart.redraw();
 
-console.log(stockSymbols);
-
-// stockSymbols = followNewStock('GOOG');
-//stockSymbols = followNewStock('ALGN');
+stockSymbols = followNewStock('GOOG');
+// stockSymbols = followNewStock('ALGN');
 //stockSymbols = followNewStock('ADBE');
 //stockSymbols = followNewStock('NFLX');
 // stockSymbols = followNewStock('MSFT');
 // stockSymbols = followNewStock('FB');
 // stockSymbols = followNewStock('AMAT');
 
-console.log("stock symbols before unfollowing FB " + stockSymbols);
+// console.log("stock symbols before unfollowing FB " + stockSymbols);
 // stockSymbols = unfollowStock('FB');
-console.log("stock symbols after unfollowing FB " + stockSymbols);
+// console.log("stock symbols after unfollowing FB " + stockSymbols);
 // After unfollowing a stock, the stockSymbols array looks like this (empty spot for the stock deleted)
 // AAPL,,GOOG,MSFT
 // We may need to fix this!!!!!!
-
-// stockSymbols = followNewStock('DIA');
-// stockSymbols = followNewStock('CRMT');
-// stockSymbols = followNewStock('DWCH');
 
 // minute updates
 updateChart();
