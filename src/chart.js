@@ -1,3 +1,7 @@
+// add the default stocks for the user to view. they must log in to add/remove stocks. 
+// get the stocks that the user is following from the database if the user is signed in. return as javascript array and replace with stockSymbols. 
+// if else
+
 var datatext;
 var stockSymbols = ['AAPL', 'MSFT', 'AVGO'];
 var countStocks = 2; // initialize this to however many stocks the user was viewing in their last session/default number of stocks
@@ -69,6 +73,7 @@ var myChart = Highcharts.stockChart('container', {
                   var jObj = JSON.parse(JSON.stringify(outData));
 
                   stockSeries[symbolIndex] = outData;
+                  // set id here?
                 }
             }
         },
@@ -137,7 +142,10 @@ var myChart = Highcharts.stockChart('container', {
 
 // update function, at 1 minute mark
 function updateChart () {
+  console.log("in updateChart");
+  console.log(stockSymbols);
   var series = myChart.series;
+  console.log(series);
 
   var symbolString = "";
 
@@ -186,6 +194,11 @@ function updateChart () {
             marAvg = null;
           }
 
+          var outPoint = {
+            x: millis,
+            y: marAvg
+          };
+
           series[symbolIndex].addPoint([millis, marAvg], true, true); // why doesnt animation work? -- animations happen when we do myChart.redraw()
       }
 
@@ -198,133 +211,16 @@ function updateChart () {
   }, 60000);
 }
 
-// this function will be called when the user chooses to follow a new stocks
-// make sure the user is not surpassing the max number of stocks we want to display
-function followNewStock(newStockSymbol)
-{
-  // TODO make sure that newStockSymbol is a real stock symbol available to us
-  var copyStockSymbols = stockSymbols.slice();
-  if (countStocks >= 5)
-  {
-    console.log("max number of stocks already reached when trying to add " + newStockSymbol);
-    return copyStockSymbols;
-  }
-
-  // see if the stock is already in stockSymbols, if so, return
-  // method 1 of looking for duplicate stocks (doesn't work)
-  var alreadyFollowing = stockSymbols.includes(newStockSymbol);
-  if (alreadyFollowing)
-  {
-    console.log("already following bool");
-    return copyStockSymbols;
-  }
-
-  // method 2 of looking for duplicate stocks (doesn't work)
-  for (var k = 0; k < stockSymbols.length; k++)
-  {
-    if (stockSymbols[k] === newStockSymbol)
-    {
-      console.log("already following for");
-      return copyStockSymbols;
-    }
-  }
-
-  // add the new stock if not already following
-  copyStockSymbols.push(newStockSymbol);
-  countStocks += 1;
-  stockSymbols = copyStockSymbols;
-
-  $.ajax({
-      method: 'GET',
-      async: false,
-      url: 'https://api.iextrading.com/1.0/stock/market/batch?symbols=' + newStockSymbol + '&types=chart&range=1d&chartLast=60'
-  })
-  .done(function(results) {
-      datatext = results;
-  })
-  .fail(function() {
-      console.log("error");
-  });
-
-  stockSymbols = Object.keys(datatext);
-  // we don't really need this for loop because only one new stock should be added at a time
-
-  for (symbolIndex = 0; symbolIndex < stockSymbols.length; symbolIndex++)
-  {
-    var stockName = stockSymbols[symbolIndex];
-    var allStockInfo = datatext[stockName];
-    var chartInfo = allStockInfo.chart;
-    var outData = [];
-    for (var k = 0; k < chartInfo.length; k++)
-    {
-      var thing = chartInfo[k];
-      var month = thing.date.substring(4, 6);
-      var mint = parseInt(month);
-      mint--;
-      var correctMonth = mint.toString();
-      var datething = new Date(thing.date.substring(0, 4),correctMonth, thing.date.substring(6, 8), thing.minute.substring(0, 2), thing.minute.substring(3, 5), '00', '00');
-      var millis = parseInt(Date.parse(datething.toISOString())) - (480*60000);
-
-      var marAvg = thing.marketAverage;
-      if (marAvg === -1)
-      {
-        marAvg = thing.average;
-      }
-
-      if (marAvg === -1)
-      {
-        console.log("-1 value found");
-        marAvg = null;
-      }
-      outData[k] = {
-        x: millis,
-        y: marAvg
-      };
-    }
-    var jObj = JSON.parse(JSON.stringify(outData));
-
-    myChart.addSeries({
-      name: newStockSymbol,
-      data: outData
-    }, true); // true so the line will be redrawn
-  }
-
-  return copyStockSymbols;
-}
-
-function unfollowStock (stockName)
-{
-  var copyStockSymbols = stockSymbols.slice();
-  if (copyStockSymbols.includes(stockName))
-  {
-    var stockIndex = copyStockSymbols.indexOf(stockName);
-    delete copyStockSymbols[stockIndex];
-    myChart.series[stockIndex].remove();
-    countStocks -= 1;
-  }
-  else {
-    console.log('stock not found, not removing');
-  }
-  return copyStockSymbols;
-}
-
 // add initial stocks to the graph
 for (var i = 0; i < stockSeries.length; i++)
 {
   myChart.addSeries({
     name: stockSymbols[i],
+    id: stockSymbols[i],
     data: stockSeries[i]
   }, false);
 }
 myChart.redraw();
-
-stockSymbols = followNewStock('GOOG');
-// console.log("stock symbols before unfollowing FB " + stockSymbols);
-// stockSymbols = unfollowStock('FB');
-// console.log("stock symbols after unfollowing FB " + stockSymbols);
-// After unfollowing a stock, the stockSymbols array looks like this (empty spot for the stock deleted)
-// AAPL,,GOOG,MSFT
-// We may need to fix this!!!!!!
 
 // minute updates
 updateChart();
