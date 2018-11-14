@@ -18,9 +18,13 @@ require "databaseConnection.php";
 $termExists = false;
 
 if (isset($_GET['searchTerm']) && !empty($_GET['searchTerm'])) {
-    $searchTerm = $_GET["searchTerm"];
+    $mSearchTerm = $_GET["searchTerm"];
+    $searchTerm = str_replace(' ', '-', $mSearchTerm); // Replaces all spaces with hyphens.
+    $searchTerm = preg_replace('/[^A-Za-z0-9#^+\-]/', '', $searchTerm);
+    
     $urlEncodedTerm = urlencode($searchTerm);
     $escapedTerm = mysqli_real_escape_string($mysqli, $searchTerm);
+    
 
     $termExists = true;
     #$sql_stocks = "SELECT * FROM Stocks WHERE companyName LIKE '%$searchTerm%' OR symbol LIKE '%$searchTerm%';";
@@ -42,25 +46,27 @@ $sql_num_stocks = $sql_num_stocks . ";";
 $results_num_stocks = $mysqli->query($sql_num_stocks);
 if ( $results_num_stocks == false ) {
     echo $mysqli->error;
+    echo "<br />$sql_num_stocks";
     exit();
 }
 
 // How many results per page??
 $results_per_page = 25; // arbitrary
 $first_page = 1;
+$current_page = 1;
 
 // Get the result (count)
 $row = $results_num_stocks->fetch_assoc();
 $num_results = $row['count'];
 
 $last_page = ceil($num_results / $results_per_page);
+if ($last_page == 0) {
+    $last_page = 1;
+}
 
 // Current page?
 if( isset($_GET['page']) && !empty($_GET['page'])) {
     $current_page = $_GET['page'];
-}
-else {
-    $current_page = $first_page;
 }
 
 // Error checking - out of bounds?
@@ -68,7 +74,7 @@ if($current_page < $first_page) {
     // force back to the first page
     $current_page = $first_page;
 }
-elseif($current_page > $last_page) {
+else if($current_page > $last_page) {
     $current_page = $last_page;
 }
 
@@ -78,7 +84,7 @@ $start_index = ($current_page - 1) * $results_per_page;
 // Get actual results
 $sql_stocks = "SELECT * FROM Stocks";
 if($termExists) {
-    $sql_stocks = $sql_stocks . " WHERE companyName LIKE '%$searchTerm%' OR symbol LIKE '%$searchTerm%'";
+    $sql_stocks = $sql_stocks . " WHERE companyName LIKE \"%$escapedTerm%\" OR symbol LIKE \"%$escapedTerm%\"";
 }
 $sql_stocks = $sql_stocks . " LIMIT " .$start_index. ", " .$results_per_page. ";";
 

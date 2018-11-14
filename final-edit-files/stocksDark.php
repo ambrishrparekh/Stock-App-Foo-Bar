@@ -18,7 +18,10 @@ require "databaseConnection.php";
 $termExists = false;
 
 if (isset($_GET['searchTerm']) && !empty($_GET['searchTerm'])) {
-    $searchTerm = $_GET["searchTerm"];
+    $mSearchTerm = $_GET["searchTerm"];
+    $searchTerm = str_replace(' ', '-', $mSearchTerm); // Replaces all spaces with hyphens.
+    $searchTerm = preg_replace('/[^A-Za-z0-9#^+\-]/', '', $searchTerm);
+    
     $urlEncodedTerm = urlencode($searchTerm);
     $escapedTerm = mysqli_real_escape_string($mysqli, $searchTerm);
 
@@ -48,19 +51,20 @@ if ( $results_num_stocks == false ) {
 // How many results per page??
 $results_per_page = 25; // arbitrary
 $first_page = 1;
+$current_page = 1;
 
 // Get the result (count)
 $row = $results_num_stocks->fetch_assoc();
 $num_results = $row['count'];
 
 $last_page = ceil($num_results / $results_per_page);
+if ($last_page == 0) {
+    $last_page = 1;
+}
 
 // Current page?
 if( isset($_GET['page']) && !empty($_GET['page'])) {
     $current_page = $_GET['page'];
-}
-else {
-    $current_page = $first_page;
 }
 
 // Error checking - out of bounds?
