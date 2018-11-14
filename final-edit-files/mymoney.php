@@ -128,7 +128,7 @@
                 }
             }
         ?>
-   		<table class="table table-striped">
+   		<table id="mytable" class="table table-striped">
             <tr>
                 <th scope="col">Symbol</th>
                 <th scope="col">Amount</th>
@@ -142,19 +142,7 @@
             <tr>
                 <td scope="row"><?php echo $symbolArr[$i];?></td>
                 <td><?php echo $amountArr[$i];?></td>
-                <td class="priceColumn"><?php
-                    $priceUrl = "https://api.iextrading.com/1.0/stock/".urlencode($symbolArr[$i])."/price";
-                    $price = file_get_contents($priceUrl, false, stream_context_create($arrContextOptions));
-                    if ((float)$priceArr[$i] < 0) {
-                        $price = "Price not available";
-                        echo $price;
-                    }
-                    else {
-                        $price = number_format((float)$priceArr[$i], 2);
-                        echo $price;
-                    }
-                ?>
-                </td>
+                <td class="priceColumn"></td>
                 <td class="buyColumn">
                     <form class="form-inline" action="invest.php?symbol=<?php echo urlencode($symbolArr[$i]);?>" method="post">
                         <label for="buy">Buy</label>
@@ -214,4 +202,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+    var symbolArr = <?php echo json_encode($symbolArr).";";?>
+	var priceUrl = "https://api.iextrading.com/1.0/stock/market/batch?types=price&symbols=";
+    for (i = 0; i < symbolArr.length; i++) {
+        priceUrl = priceUrl + encodeURI(symbolArr[i]) + ",";
+        if (i%100 == 99 || i == symbolArr.length - 1) {
+            priceUrl = priceUrl.substring(0, priceUrl.length-1);
+			$.ajax({
+				url: priceUrl,
+				success: function(result) {
+					var k = Math.floor(i / 100) * 100;
+					for (var symbol in result) {
+						document.getElementById("mytable").rows[k+1].cells[2].innerHTML = "$" + result[symbol].price;
+						k++;
+					}
+				}
+			});
+        	priceUrl = "https://api.iextrading.com/1.0/stock/market/batch?types=price&symbols=";
+        }
+    }
+    </script>
 </html>
