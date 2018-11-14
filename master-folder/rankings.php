@@ -98,7 +98,7 @@ $curr_rank = 0;
                     <tr>
                         <th><?php $curr_rank = $curr_rank + 1; echo $curr_rank; ?></th>
                         <th><?php echo $row['r_username']; ?></th>
-                        <th><?php echo $row['r_money']; ?></th>
+                        <th><?php echo '$'.number_format(((float)$row['r_money'])/100.0, 2); ?></th>
                     </tr>
                 <?php endwhile; ?>
         </table>
