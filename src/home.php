@@ -14,9 +14,9 @@ require "databaseConnection.php";
 $symbolArr = array();
 if (array_key_exists("signedIn", $_SESSION) && $_SESSION["signedIn"] === TRUE) {
     $username = $_SESSION["username"];
-    
+
     include 'databaseConnection.php';
-    
+
     // get balance of this user
     $sql = "SELECT i_symbol FROM Investments WHERE i_username=\"$username\";";
     $results = $mysqli->query($sql);
@@ -268,8 +268,8 @@ $mysqli->close();
     myChart.redraw();
 
 
-    
-        
+
+
     </script>
     <script type="text/javascript">
     var datatext;
@@ -488,7 +488,7 @@ $mysqli->close();
 
     // minute updates
     updateChart();
-        
+
     </script>
 </body>
 </html>
