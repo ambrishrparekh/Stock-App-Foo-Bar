@@ -96,8 +96,13 @@
         </div>
     </nav>
 
-    <main class="mx-auto">
-		<h3>My balance: $<?php echo number_format($balance, 2);?></h3>
+    <main class="">
+        <div style="text-align:center;">
+            <h1 class="display-3"><u><?php echo $_SESSION['username']; ?>&apos;s Profile</u></h1>
+            <h3>My balance: $<?php echo number_format($balance, 2);?></h3>
+        </div>
+        <br>
+        <h1 class="display-4"><u>My Stocks</u></h1>
         <?php if ($results->num_rows >= 1): ?>
         <?php
             $symbolArr = array();
@@ -176,7 +181,7 @@
                     <form class="form-inline" action="invest.php?symbol=<?php echo urlencode($symbolArr[$i]);?>" method="post">
                         <label for="sell">Sell</label>
                         <div class="input-group">
-                            <input class="form-control ml-3" type="number" id="sell" name="sellAmount" value="1" min="1" max="<?php echo $row["i_amount"];?>">
+                            <input class="form-control ml-3" type="number" id="sell" name="sellAmount" value="1" min="1" max="<?php echo $amountArr[$i];?>">
                             <div class="input-group-append">
                                 <input class="btn btn-warning" type="submit" name="submit" value="Sell">
                             </div>
@@ -192,9 +197,9 @@
             <div class="text-danger">Follow a stock to start investing! Go to the Stocks page to get started!<div>
         <?php endif; ?>
     </main>
-    <div class="row justify-content-center align-items-center">
-        <a class="btn btn-outline-dark" href="mymoneyDark.php">Dark Theme</a>
-        <a class="btn btn-outline-danger" href="index.php">Log Out</a>
+    <div class="d-flex justify-content-center align-items-center">
+        <a class="btn btn-outline-dark mr-3 mb-3" href="mymoneyDark.php">Dark Theme</a>
+        <a class="btn btn-outline-danger mb-3" href="index.php">Log Out</a>
     </div>
 
 </body>

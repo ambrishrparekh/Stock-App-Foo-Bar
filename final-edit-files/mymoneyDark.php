@@ -54,7 +54,7 @@
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/logo.css">
+    <link rel="stylesheet" href="css/logoDark.css">
     <!-- Custom styles for this template -->
     <!-- <link href="starter-template.css" rel="stylesheet"> -->
 
@@ -69,10 +69,10 @@
 
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
+<body class="bg-dark text-light">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <div class="navbar-brand" href="#" style="width: 200px;">
-            <?php include "components/nav.html"; ?>
+            <?php include "components/navDark.html"; ?>
         </div>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,23 +81,28 @@
         <div class="collapse navbar-collapse text-center" id="navbarText">
             <ul class="navbar-nav nav-fill w-100">
                 <li class="nav-item">
-                    <a class="nav-link" href="home.php">Home</a>
+                    <a class="nav-link" href="homeDark.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="stocks.php">Stocks</a>
+                    <a class="nav-link" href="stocksDark.php">Stocks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="rankings.php">Rankings</a>
+                    <a class="nav-link" href="rankingsDark.php">Rankings</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="mymoney.php">My Money</a>
+                    <a class="nav-link" href="mymoneyDark.php">My Money</a>
                 </li>
             </ul>
         </div>
     </nav>
 
-    <main class="mx-auto">
-		<h3>My balance: $<?php echo number_format($balance, 2);?></h3>
+    <main>
+        <div style="text-align:center;">
+            <h1 class="display-3"><?php echo $_SESSION['username']; ?>&apos;s Profile</h1>
+            <h4>My balance: $<?php echo number_format($balance, 2);?></h4>
+        </div>
+        <br>
+        <h1 class="display-5 mb-4">My Stocks</h1>
         <?php if ($results->num_rows >= 1): ?>
         <?php
             $symbolArr = array();
@@ -123,7 +128,7 @@
                 }
             }
         ?>
-   		<table class="table table-striped">
+   		<table class="table table-striped table-dark">
             <tr>
                 <th scope="col">Symbol</th>
                 <th scope="col">Amount</th>
@@ -151,8 +156,7 @@
                 ?>
                 </td>
                 <td class="buyColumn">
-                    <form class="form-inline" action="invest.php?symbol=<?php echo urlencode($symbolArr[$i]);?>" method="post">
-                        <label for="buy">Buy</label>
+                    <form class="form-inline" action="investDark.php?symbol=<?php echo urlencode($symbolArr[$i]);?>" method="post">
                         <div class="input-group">
                             <input class="form-control ml-3" type="number" id="buy" name="buyAmount" min="1" value="1">
                             <div class="input-group-append">
@@ -165,7 +169,7 @@
                 <?php
                     if (array_key_exists("status", $_REQUEST)) {
                         $status = $_REQUEST["status"];
-                        if ($status == "lowBalance" && urldecode($symbolArr[$i]) == $_REQUEST["symbol"]) {
+                        if ($status == "lowBalance" && $symbolArr[$i] == $_REQUEST["symbol"]) {
                             echo "<strong class=\"text-danger\">Not enough money</strong>";
                         }
                     }
@@ -173,10 +177,9 @@
                 </td>
                 <td class="sellColumn">
                 <?php if ($amountArr[$i] != 0) { ?>
-                    <form class="form-inline" action="invest.php?symbol=<?php echo urlencode($symbolArr[$i]);?>" method="post">
-                        <label for="sell">Sell</label>
+                    <form class="form-inline" action="investDark.php?symbol=<?php echo urlencode($symbolArr[$i]);?>" method="post">
                         <div class="input-group">
-                            <input class="form-control ml-3" type="number" id="sell" name="sellAmount" value="1" min="1" max="<?php echo $row["i_amount"];?>">
+                            <input class="form-control ml-3" type="number" id="sell" name="sellAmount" value="1" min="1" max="<?php echo $amountArr[$i];?>">
                             <div class="input-group-append">
                                 <input class="btn btn-warning" type="submit" name="submit" value="Sell">
                             </div>
@@ -192,9 +195,9 @@
             <div class="text-danger">Follow a stock to start investing! Go to the Stocks page to get started!<div>
         <?php endif; ?>
     </main>
-    <div class="row justify-content-center align-items-center">
-        <a class="btn btn-outline-dark" href="mymoneyDark.php">Dark Theme</a>
-        <a class="btn btn-outline-danger" href="index.php">Log Out</a>
+    <div class="d-flex justify-content-center align-items-center">
+        <a class="btn btn-outline-light mr-3 mb-4" href="mymoney.php">Light Theme</a>
+        <a class="btn btn-outline-danger mb-4" href="index.php">Log Out</a>
     </div>
 
 </body>
