@@ -70,6 +70,27 @@
 </head>
 
 <body class="bg-dark text-light">
+
+        <style>
+        
+        .table > tbody > tr > td {
+     vertical-align: middle;
+}
+        .form-control {
+            background-color: #343A40 !important;
+            color: white !important;
+        }
+        .form-control:hover {
+            background-color: #6C757D;
+            color: white;
+        }
+        .form-control:focus {
+            background-color: #F8F9FA !important;
+            color: black !important;
+        }
+        
+        </style>
+
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <div class="navbar-brand" href="#" style="width: 200px;">
             <?php include "components/navDark.html"; ?>

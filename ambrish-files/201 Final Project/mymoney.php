@@ -70,6 +70,13 @@
 </head>
 
 <body>
+
+<style>
+.table > tbody > tr > td {
+     vertical-align: middle;
+}
+</style>
+
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <div class="navbar-brand" href="#" style="width: 200px;">
             <?php include "components/nav.html"; ?>

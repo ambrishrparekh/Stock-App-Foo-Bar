@@ -168,6 +168,61 @@ if(!$results_stocks) {
 
 <body class="bg-dark text-light">
 
+<style>
+.table > tbody > tr > td {
+     vertical-align: middle;
+}
+.form-control {
+            background-color: #343A40;
+            color: white;
+        }
+        .form-control:hover {
+            background-color: #6C757D;
+            color: white;
+            placeholder-color: white;
+        }
+        .form-control:focus {
+            background-color: #F8F9FA;
+            color: black;
+        }
+        .page-link {
+            background-color: #343A40;
+            color: whitesmoke;
+        }
+        .page-link:hover {
+            background-color: #6C757D;
+            color: white;
+        }
+        .pagination > li > a
+{
+    background-color: #343A40;
+    color: whitesmoke;
+}
+
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover
+{
+    color: black;
+    background-color: lightgray;
+    border-color: #ddd;
+}
+
+.pagination > .active > a
+{
+    color: white !important;
+    background-color: #6C757D !important;
+    border: solid 1px whitesmoke !important;
+}
+
+.pagination > .active > a:hover
+{
+    background-color: #6C757D !important;
+    border: solid 1px whitesmoke !important;
+}
+</style>
+
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <a class="navbar-brand" href="homeDark.php" style="width: 200px;">
             <?php include "components/navDark.html"; ?>
@@ -216,7 +271,7 @@ if(!$results_stocks) {
                 >
             </div>
 
-            <input class="btn btn-primary mb-3" type="submit" value="Search!">
+            <input class="btn btn-secondary mb-3" type="submit" value="Search">
             <!-- </div> -->
             <!-- </div> -->
         </form>

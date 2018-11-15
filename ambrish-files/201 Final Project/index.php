@@ -39,7 +39,7 @@
 ?>
 
 <!DOCTYPE html>
-<html>
+<html class="container-fluid h-100">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -53,7 +53,6 @@
 
     <style>
     body {
-        background-color: #dadada;
         padding-top: 3em;
     }
     main {
@@ -61,12 +60,27 @@
     }
     #login {
         font-size: 4rem;
-        color: #333;
         font-weight: 400;
     }
     </style>
 </head>
-<body>
+<body class="h-100" style="background-image: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%);">
+
+<style>
+    body {
+        padding-top: 3em;
+    }
+    main {
+        margin-top: 3em;
+    }
+    #login {
+        font-size: 4rem;
+        font-weight: 400;
+    }
+    .form-control {
+        background-color: whitesmoke;
+    }
+    </style>
 
     <div class="container-fluid">
         <div class="row">

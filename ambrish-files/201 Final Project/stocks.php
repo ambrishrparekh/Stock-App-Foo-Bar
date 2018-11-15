@@ -167,6 +167,12 @@ if(!$results_stocks) {
 
 <body>
 
+<style>
+.table > tbody > tr > td {
+     vertical-align: middle;
+}
+</style>
+
     <nav class="navbar navbar-expand-sm navbar-light bg-light">
         <a class="navbar-brand" href="home.php" style="width: 200px;">
             <?php include "components/nav.html"; ?>
@@ -215,7 +221,7 @@ if(!$results_stocks) {
                 >
             </div>
 
-                <input class="btn btn-primary mb-3" type="submit" value="Search!">
+                <input class="btn btn-primary mb-3" type="submit" value="Search">
                 <!-- </div> -->
             <!-- </div> -->
         </form>
