@@ -72,10 +72,10 @@
 <body class="bg-dark text-light">
 
         <style>
-        
+
         .table > tbody > tr > td {
-     vertical-align: middle;
-}
+            vertical-align: middle;
+        }
         .form-control {
             background-color: #343A40 !important;
             color: white !important;
@@ -88,7 +88,7 @@
             background-color: #F8F9FA !important;
             color: black !important;
         }
-        
+
         </style>
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
