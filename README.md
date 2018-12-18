@@ -21,4 +21,5 @@ StockOverflow is a web-based stocks app that prioritizes meaningful data over ra
 * Ability to select preset time periods and zoom in on any period within the past 5 years.
 * LIVE updates every minute!
 * Data from IEX.
-* Optional Massively Multiplayer Online game that allows users to invest in stocks using pretend money. Users are then ranked on a leaderboard based on the monetary value of the stocks they own, if liquidated immediately (using live price data).
+* Optional Massively Multiplayer Online game that allows users to trade stocks using pretend money. Users are then ranked on a leaderboard based on the monetary value of the stocks they own, if liquidated immediately (using live price data).
+* Can follow stocks. Preferences roam across user sessions.
